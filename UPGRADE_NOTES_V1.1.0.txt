@@ -1,0 +1,56 @@
+HEALTHOME V1.1.0 - REFERENCE APP FEATURE UPGRADE
+
+Added frontend feature modules based only on gaps identified against the supplied reference APK:
+
+1. Find a Doctor
+   - Doctor search
+   - Specialty, experience, rating and fee display
+   - Availability status
+   - Video/voice consultation selection
+
+2. Consultation
+   - Dedicated secure consultation screen
+   - Video/voice mode UI
+   - Production integration point for Agora/backend
+
+3. Lab Tests
+   - Lab/test search
+   - Test cards, pricing, turnaround and test count
+   - Booking flow entry point
+
+4. Health Records
+   - Prescriptions, lab reports, medical documents and vaccination categories
+   - Medical document upload using the existing image picker
+   - Session document list
+
+5. Family Members
+   - Family profile management screen
+
+6. Healthome Wallet
+   - Wallet balance
+   - Add-money flow placeholder
+   - Transaction entry point
+
+7. Home quick-access feature grid
+   - Doctors, Lab Tests, Records and Wallet
+
+8. Profile hub
+   - Added Health Records, Family Members and Wallet entries
+
+9. Side menu
+   - Added Find a Doctor and Lab Tests
+
+10. Android release metadata
+   - app version 1.1.0
+   - Android versionCode 3
+
+IMPORTANT PRODUCTION ITEMS STILL REQUIRE SERVER-SIDE IMPLEMENTATION:
+- Real authentication/OTP provider
+- Real doctor/lab APIs and database
+- Real Agora token service and consultation backend
+- Real payment gateway and payment verification
+- Persistent cloud health-record storage
+- Push notification backend
+- Admin/doctor/lab portals
+
+No Python/C++ layer was added because the app is Expo/React Native and these features do not require native C++ to work correctly. Adding them without a specific native requirement would increase complexity.

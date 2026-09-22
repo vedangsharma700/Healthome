@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Healthome Agent",
+    "slug": "healthome-agent",
+    "version": "1.8.0",
+    "android": {
+      "package": "com.healthome.agent",
+      "versionCode": 1
+    }
+  }
+}

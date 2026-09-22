@@ -1,0 +1,11 @@
+Healthome UI/Theme Upgrade V1.3.0
+
+Design direction: Clinical Luxe
+- Consistent navy/teal medical palette
+- Softer neutral app background
+- Unified borders and text hierarchy
+- Centralized design tokens in src/theme/healthomeTheme.js
+- Existing feature-specific accent colors retained where useful
+- Main/home/auth/navigation surfaces updated for a more consistent premium healthcare feel
+
+No new native dependencies were introduced.

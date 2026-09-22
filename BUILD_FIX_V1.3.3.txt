@@ -1,0 +1,5 @@
+Healthome V1.3.3 build fix
+
+Fixed duplicate walletBalance and familyMembers state declarations in src/app/HealthomeApp.js that caused Metro SyntaxError.
+
+Validation: run `npx expo export --platform android` before EAS.

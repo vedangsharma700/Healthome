@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Healthome",
+    "slug": "healthome",
+    "version": "1.7.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "healthome",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "android": {
+      "package": "com.healthome.app",
+      "versionCode": 12,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "CAMERA"
+      ]
+    },
+    "ios": {
+      "bundleIdentifier": "com.healthome.app",
+      "supportsTablet": true
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow Healthome to use your location to provide live tracking and emergency assistance."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Healthome to access photos for prescriptions and profile photos.",
+          "cameraPermission": "Allow Healthome to use the camera for prescriptions and profile photos.",
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}

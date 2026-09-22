@@ -1,0 +1,24 @@
+# Never upload installed dependencies; EAS installs them in the build environment.
+node_modules/
+.git/
+.expo/
+.expo-shared/
+.eas/
+android/
+ios/
+dist/
+web-build/
+*.apk
+*.aab
+*.ipa
+npm-debug.log*
+yarn-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.env
+.env.*
+!.env.example
+
+.expo-export-check/

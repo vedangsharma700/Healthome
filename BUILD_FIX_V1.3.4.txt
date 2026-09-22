@@ -1,0 +1,8 @@
+Healthome V1.3.4 build fix
+
+Fixed Metro asset resolution error in src/app/HealthomeApp.js.
+The logo was referenced relative to src/app, but the actual assets directory is at the project root.
+Changed require('./assets/healthome-logo.png') to require('../../assets/healthome-logo.png').
+
+Version: 1.3.4
+Android versionCode: 8

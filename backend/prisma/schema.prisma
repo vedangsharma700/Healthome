@@ -1,0 +1,321 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PATIENT
+  DOCTOR
+  SUPPORT
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+}
+
+enum ConsultationType {
+  VIDEO
+  VOICE
+}
+
+enum ConsultationStatus {
+  SCHEDULED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum OrderStatus {
+  CREATED
+  PAID
+  PACKED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+  REFUND
+  TOPUP
+}
+
+model User {
+  id             String         @id @default(cuid())
+  phone          String         @unique
+  name           String?
+  email          String?        @unique
+  role           UserRole       @default(PATIENT)
+  passwordHash   String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  familyMembers  FamilyMember[]
+  bookings       Booking[]
+  labBookings    LabBooking[]
+  payments       Payment[]
+  records        HealthRecord[]
+  prescriptions  Prescription[]
+  wallet         Wallet?
+  orders         Order[]
+  notifications  Notification[]
+  addresses      Address[]
+  doctorProfile  Doctor?
+}
+
+model OtpCode {
+  id          String    @id @default(cuid())
+  phone       String
+  codeHash    String
+  expiresAt   DateTime
+  consumedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([phone])
+}
+
+model FamilyMember {
+  id       String   @id @default(cuid())
+  userId   String
+  name     String
+  relation String
+  phone    String?
+  dob      DateTime?
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Doctor {
+  id              String              @id @default(cuid())
+  userId          String              @unique
+  specialty       String
+  qualification   String?
+  experienceYears Int                 @default(0)
+  fee             Int                 @default(0)
+  bio             String?
+  rating          Float               @default(0)
+  active          Boolean             @default(true)
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  availabilities  DoctorAvailability[]
+  bookings        Booking[]
+  prescriptions   Prescription[]
+}
+
+model DoctorAvailability {
+  id           String @id @default(cuid())
+  doctorId     String
+  weekday      Int
+  startMinutes Int
+  endMinutes   Int
+  doctor       Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  @@index([doctorId, weekday])
+}
+
+model Service {
+  id          String    @id @default(cuid())
+  name        String
+  category    String
+  description String?
+  price       Int       @default(0)
+  active      Boolean   @default(true)
+  bookings    Booking[]
+}
+
+model LabTest {
+  id              String       @id @default(cuid())
+  name            String
+  category        String
+  description     String?
+  price           Int
+  turnaroundHours Int          @default(24)
+  active          Boolean      @default(true)
+  labBookings     LabBooking[]
+}
+
+model Booking {
+  id                String            @id @default(cuid())
+  userId            String
+  doctorId          String?
+  serviceId         String?
+  scheduledAt       DateTime
+  status            BookingStatus     @default(PENDING)
+  consultationType  ConsultationType?
+  amount            Int               @default(0)
+  user              User              @relation(fields: [userId], references: [id])
+  doctor            Doctor?            @relation(fields: [doctorId], references: [id])
+  service           Service?           @relation(fields: [serviceId], references: [id])
+  payment           Payment?
+  consultation      Consultation?
+  prescriptions     Prescription[]
+
+  @@index([userId, scheduledAt])
+  @@index([doctorId, scheduledAt])
+}
+
+model Consultation {
+  id          String             @id @default(cuid())
+  bookingId   String             @unique
+  type        ConsultationType
+  status      ConsultationStatus @default(SCHEDULED)
+  meetingUri  String?
+  meetingCode String?
+  startsAt    DateTime
+  endsAt      DateTime?
+  booking     Booking            @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model LabBooking {
+  id          String        @id @default(cuid())
+  userId      String
+  testId      String
+  scheduledAt DateTime
+  addressId   String?
+  status      BookingStatus @default(PENDING)
+  amount      Int
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  test        LabTest       @relation(fields: [testId], references: [id])
+  address     Address?      @relation(fields: [addressId], references: [id])
+
+  @@index([userId, scheduledAt])
+}
+
+model HealthRecord {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  type      String
+  fileUrl   String?
+  notes     String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Prescription {
+  id        String    @id @default(cuid())
+  userId    String
+  doctorId  String?
+  bookingId String?
+  fileUrl   String?
+  notes     String?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+  doctor    Doctor?   @relation(fields: [doctorId], references: [id])
+  booking   Booking?  @relation(fields: [bookingId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
+model Wallet {
+  id           String             @id @default(cuid())
+  userId       String             @unique
+  balance      Int                @default(0)
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions WalletTransaction[]
+}
+
+model WalletTransaction {
+  id        String          @id @default(cuid())
+  walletId  String
+  type      TransactionType
+  amount    Int
+  reference String?
+  createdAt DateTime        @default(now())
+  wallet    Wallet          @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@index([walletId, createdAt])
+}
+
+model Address {
+  id          String        @id @default(cuid())
+  userId      String
+  label       String
+  line1       String
+  city        String
+  state       String
+  pincode     String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  labBookings LabBooking[]
+  orders      Order[]
+}
+
+model Medicine {
+  id                   String      @id @default(cuid())
+  name                 String
+  category             String
+  description          String?
+  price                Int
+  stock                Int         @default(0)
+  prescriptionRequired Boolean     @default(false)
+  active               Boolean     @default(true)
+  orderItems           OrderItem[]
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  userId    String
+  status    OrderStatus @default(CREATED)
+  total     Int
+  addressId String?
+  createdAt DateTime    @default(now())
+  user      User        @relation(fields: [userId], references: [id])
+  address   Address?    @relation(fields: [addressId], references: [id])
+  items     OrderItem[]
+  payment   Payment?
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  medicineId String
+  quantity   Int
+  unitPrice  Int
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  medicine   Medicine @relation(fields: [medicineId], references: [id])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String
+  bookingId         String?       @unique
+  orderId           String?       @unique
+  provider          String?
+  providerPaymentId String?
+  amount            Int
+  status            PaymentStatus @default(CREATED)
+  createdAt         DateTime      @default(now())
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  booking           Booking?      @relation(fields: [bookingId], references: [id])
+  order             Order?        @relation(fields: [orderId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}

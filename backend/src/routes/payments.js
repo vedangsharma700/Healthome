@@ -1,0 +1,4 @@
+import { Router } from 'express'; import { auth } from '../middleware/auth.js'; import { prisma } from '../lib/prisma.js';
+const r=Router();
+r.post('/create',auth(),async(req,res)=>{const {bookingId,orderId}=req.body||{};if(!bookingId&&!orderId)return res.status(400).json({message:'bookingId or orderId required'});let amount=0;if(bookingId){const b=await prisma.booking.findFirst({where:{id:bookingId,userId:req.user.sub}});if(!b)return res.status(404).json({message:'Booking not found'});amount=b.amount;}else{const o=await prisma.order.findFirst({where:{id:orderId,userId:req.user.sub}});if(!o)return res.status(404).json({message:'Order not found'});amount=o.total;}const p=await prisma.payment.create({data:{userId:req.user.sub,bookingId:bookingId||undefined,orderId:orderId||undefined,amount,status:'CREATED'}});res.status(201).json({payment:p,provider:'configure-razorpay-on-server'});});
+export default r;

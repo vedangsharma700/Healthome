@@ -1,0 +1,28 @@
+Healthome Professional Refactor - V1.2.0
+========================================
+
+Completed in this refactor:
+- Moved the application entry point to a dedicated App.js shell.
+- Moved the existing Healthome application into src/app/HealthomeApp.js.
+- Added a global React Error Boundary with a safe recovery screen.
+- Added a storage service layer and centralized storage keys.
+- Added a network service with timeout and normalized network errors.
+- Added reusable validation helpers for phone/name/OTP input.
+- Added centralized application configuration and tracking limits.
+- Capped live GPS history at 500 points to prevent unbounded memory growth.
+- Added Expo Doctor and EAS production build scripts.
+- Preserved the existing Android package name and versioning.
+
+Important:
+This is an architecture/stability refactor, not a claim that backend-dependent
+features are live. Real authentication, payments, doctor video calls,
+notifications, database persistence and admin operations still require a
+production backend and their provider credentials/server-side verification.
+
+Next production phase:
+1. Split HealthomeApp.js into feature screens/components.
+2. Add TypeScript and strict typing.
+3. Add API repository layer and authentication tokens.
+4. Add backend/database and server-side validation.
+5. Add payment verification, push notifications and real video-token service.
+6. Add unit/integration tests and CI.
